@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>ห้องสัมภาษณ์ — เกมจำลองสอบเข้ามหาวิทยาลัย</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202923;
+      --muted: #717a72;
+      --paper: #f7f6f2;
+      --card: #fff;
+      --line: #e8e8e1;
+      --green: #28634b;
+      --green-dark: #204d3b;
+      --mint: #e8f1e9;
+      --orange: #e8a263;
+      --shadow: 0 18px 55px #2029230d;
+      font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 8% 0%, #e8eee6 0, transparent 26rem),
+        var(--paper);
+    }
+    button, select { font: inherit; }
+    button:focus-visible, select:focus-visible {
+      outline: 3px solid #76a88b;
+      outline-offset: 3px;
+    }
+    .shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #20292312;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.02em; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center;
+      color: #fff; background: var(--green); font-size: 19px;
+    }
+    .top-note { color: var(--muted); font-size: 13px; }
+    main { padding: 48px 0 70px; }
+    .eyebrow {
+      color: var(--green); font-weight: 700; font-size: 12px; letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 14px; font-size: clamp(34px, 5vw, 56px); line-height: 1.16; letter-spacing: -.045em; }
+    h2 { margin-bottom: 10px; font-size: clamp(25px, 3vw, 34px); line-height: 1.35; letter-spacing: -.025em; }
+    p { line-height: 1.75; }
+    .intro {
+      display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 58px;
+      min-height: 430px;
+    }
+    .intro-copy { max-width: 560px; }
+    .intro-copy > p { max-width: 480px; color: var(--muted); font-size: 16px; }
+    .intro-art {
+      position: relative; min-height: 330px; display: grid; place-items: center;
+      border-radius: 28px; overflow: hidden; background: #e8eee6;
+    }
+    .sun { position: absolute; top: 31px; right: 37px; width: 77px; height: 77px; border-radius: 50%; background: #f1c78f; }
+    .window {
+      position: absolute; top: 36px; left: 35px; width: 110px; height: 139px; border: 8px solid #fff9;
+      border-radius: 60px 60px 6px 6px; background: #d4e1d5;
+    }
+    .plant { position: absolute; bottom: 27px; left: 40px; font-size: 50px; }
+    .table {
+      position: absolute; left: 15%; right: 12%; bottom: 54px; height: 14px; border-radius: 20px;
+      background: #bd9476; box-shadow: 0 30px 0 -5px #a98062;
+    }
+    .person { position: absolute; bottom: 68px; left: 47%; width: 94px; height: 166px; }
+    .person .head { position: absolute; left: 23px; top: 0; width: 52px; height: 59px; border-radius: 45% 45% 48% 48%; background: #bf8664; }
+    .person .hair { position: absolute; left: 21px; top: -5px; width: 57px; height: 29px; border-radius: 40px 40px 16px 15px; background: #3b302a; }
+    .person .body { position: absolute; left: 3px; top: 51px; width: 91px; height: 112px; border-radius: 35px 35px 10px 10px; background: var(--green); }
+    .speech {
+      position: absolute; top: 74px; right: 35px; width: 192px; padding: 14px 17px;
+      border-radius: 16px 16px 3px 16px; background: white; box-shadow: var(--shadow);
+      font-size: 13px; line-height: 1.55;
+    }
+    .speech strong { display: block; margin-bottom: 3px; color: var(--green); font-size: 11px; }
+    .intro-meta { display: flex; gap: 22px; margin: 26px 0; color: var(--muted); font-size: 13px; }
+    .intro-meta span { display: flex; align-items: center; gap: 7px; }
+    .primary {
+      border: 0; border-radius: 12px; padding: 14px 22px; color: white; background: var(--green);
+      font-weight: 700; cursor: pointer; transition: background .18s, transform .18s;
+    }
+    .primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .tiny-note { margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .game { max-width: 1000px; margin: 0 auto; }
+    .game-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+    .game-head .eyebrow { margin-bottom: 5px; }
+    .progress-label { color: var(--muted); font-size: 13px; }
+    .progress-track { height: 6px; margin-top: 10px; overflow: hidden; border-radius: 9px; background: #e4e5df; }
+    .progress-fill { height: 100%; border-radius: inherit; background: var(--green); transition: width .35s ease; }
+    .interview-grid { display: grid; grid-template-columns: minmax(0, 1fr) 275px; gap: 22px; align-items: start; }
+    .question-card, .side-card, .result-card {
+      border: 1px solid #2029230b; border-radius: 20px; background: var(--card); box-shadow: var(--shadow);
+    }
+    .question-card { padding: clamp(24px, 4vw, 43px); }
+    .question-tag {
+      display: inline-flex; padding: 6px 11px; margin-bottom: 19px; border-radius: 99px;
+      color: var(--green); background: var(--mint); font-size: 12px; font-weight: 700;
+    }
+    .question-card h2 { max-width: 680px; margin-bottom: 11px; }
+    .question-hint { margin-bottom: 26px; color: var(--muted); font-size: 14px; }
+    .answers { display: grid; gap: 11px; }
+    .answer {
+      display: flex; width: 100%; gap: 13px; align-items: flex-start; padding: 15px;
+      border: 1px solid var(--line); border-radius: 13px; color: var(--ink); background: #fff;
+      text-align: left; cursor: pointer; transition: border .15s, background .15s;
+    }
+    .answer:hover:not(:disabled) { border-color: #8dae99; background: #fbfdfb; }
+    .answer:disabled { cursor: default; }
+    .answer.selected { border-color: var(--green); background: #f2f7f2; }
+    .answer-letter {
+      flex: 0 0 27px; width: 27px; height: 27px; display: grid; place-items: center;
+      border-radius: 8px; color: #627068; background: #f1f2ee; font-size: 12px; font-weight: 700;
+    }
+    .answer.selected .answer-letter { color: white; background: var(--green); }
+    .answer-text { padding-top: 2px; font-size: 14px; line-height: 1.65; }
+    .feedback {
+      margin-top: 17px; padding: 14px 16px; border-left: 3px solid var(--orange);
+      border-radius: 3px 10px 10px 3px; color: #5b625c; background: #fbf5ed; font-size: 13px; line-height: 1.7;
+    }
+    .feedback strong { display: block; margin-bottom: 2px; color: var(--ink); }
+    .question-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .question-actions .primary:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .side-card { padding: 22px; }
+    .side-card + .side-card { margin-top: 14px; }
+    .side-card h3 { margin-bottom: 16px; font-size: 15px; }
+    .score-row { display: flex; justify-content: space-between; gap: 8px; margin-top: 13px; font-size: 12px; }
+    .score-row span:last-child { color: var(--muted); }
+    .mini-track { height: 5px; margin-top: 7px; overflow: hidden; border-radius: 9px; background: #edf0eb; }
+    .mini-fill { height: 100%; border-radius: inherit; background: #82a68a; transition: width .3s; }
+    .tip-box { padding: 15px; border-radius: 12px; color: #536157; background: #f2f5f0; font-size: 12px; line-height: 1.7; }
+    .results { max-width: 810px; margin: 0 auto; }
+    .result-card { padding: clamp(25px, 5vw, 52px); }
+    .result-top { display: flex; gap: 24px; align-items: center; padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+    .score-circle {
+      flex: 0 0 104px; width: 104px; height: 104px; display: grid; align-content: center;
+      justify-items: center; border: 7px solid #e7efe7; border-right-color: var(--green);
+      border-radius: 50%; color: var(--green); font-size: 28px; font-weight: 800;
+    }
+    .score-circle small { color: var(--muted); font-size: 10px; font-weight: 500; }
+    .result-top h1 { margin: 4px 0 3px; font-size: 30px; }
+    .result-top p { margin: 0; color: var(--muted); font-size: 13px; }
+    .result-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 24px 0; }
+    .metric { padding: 16px; border-radius: 13px; background: #f6f7f3; }
+    .metric strong { display: block; margin-bottom: 4px; font-size: 22px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .result-advice { margin: 0 0 22px; padding: 18px 20px; border-radius: 13px; background: var(--mint); }
+    .result-advice strong { display: block; margin-bottom: 4px; }
+    .result-advice p { margin: 0; color: #536157; font-size: 13px; }
+    .recap { margin: 24px 0; }
+    .recap h3 { margin-bottom: 11px; font-size: 15px; }
+    .recap-row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .recap-row span { color: var(--muted); text-align: right; }
+    .result-actions { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .text-button { border: 0; padding: 10px; color: var(--green); background: transparent; font-weight: 700; cursor: pointer; }
+    .disclaimer { margin: 19px 0 0; color: var(--muted); font-size: 11px; }
+    .hidden { display: none !important; }
+    footer { padding: 0 0 28px; color: var(--muted); text-align: center; font-size: 11px; }
+    @media (max-width: 760px) {
+      .intro { grid-template-columns: 1fr; gap: 24px; padding-top: 35px; }
+      .intro-art { min-height: 280px; }
+      .interview-grid { grid-template-columns: 1fr; }
+      .game-head { align-items: flex-start; gap: 15px; }
+      .side-column { display: none; }
+    }
+    @media (max-width: 520px) {
+      .shell {
+        width: min(1100px, calc(100% - 28px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+      }
+      .topbar { height: 68px; }
+      .top-note { max-width: 120px; text-align: right; font-size: 11px; }
+      main { padding: 28px 0 45px; }
+      .intro { min-height: 0; }
+      .intro-art { min-height: 240px; }
+      .speech { right: 15px; top: 48px; width: 160px; }
+      .window { left: 18px; }
+      .plant { left: 18px; }
+      .person { left: 43%; transform: scale(.88); transform-origin: bottom; }
+      .side-column { grid-template-columns: 1fr; }
+      .result-top { align-items: flex-start; gap: 16px; }
+      .score-circle { flex-basis: 82px; width: 82px; height: 82px; border-width: 6px; font-size: 23px; }
+      .result-top h1 { font-size: 24px; }
+      .result-metrics { gap: 7px; }
+      .metric { padding: 12px 9px; }
+      .metric strong { font-size: 18px; }
+      .metric span { font-size: 10px; }
+      .recap-row { align-items: flex-start; }
+      .primary { min-height: 50px; }
+      #start-button, .question-actions .primary, .result-actions .primary { width: 100%; }
+      .question-actions { position: sticky; bottom: 0; z-index: 1; padding: 10px 0 0; background: #fff; }
+      footer { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+    }
+    @media (max-width: 360px) {
+      .intro-meta { gap: 10px; font-size: 11px; }
+      .brand { gap: 8px; font-size: 14px; }
+      .top-note { max-width: 105px; }
+      .question-card { padding: 20px 16px; }
+      .answer { gap: 9px; padding: 12px 10px; }
+      .answer-text { font-size: 13px; }
+      .result-card { padding: 22px 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">ม</span><span>ห้องสัมภาษณ์</span></div>
+      <div class="top-note">พื้นที่ฝึกซ้อมสำหรับก้าวต่อไปของคุณ</div>
+    </header>
+    <main>
+      <section id="welcome" class="intro" aria-labelledby="welcome-title">
+        <div class="intro-copy">
+          <div class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</div>
+          <h1 id="welcome-title">วันสัมภาษณ์<br>ซ้อมให้พร้อมได้</h1>
+          <p>ลองนั่งเก้าอี้ผู้สมัคร ตอบคำถามที่อาจเจอในห้องสัมภาษณ์ แล้วรับคำแนะนำเพื่อเล่าเรื่องของตัวเองให้ชัดขึ้น</p>
+          <div class="intro-meta">
+            <span><b aria-hidden="true">◷</b> ประมาณ 8–10 นาที</span>
+            <span><b aria-hidden="true">◎</b> 20 คำถาม</span>
+            <span><b aria-hidden="true">♡</b> เล่นได้เลย</span>
+          </div>
+          <button id="start-button" class="primary">เริ่มการสัมภาษณ์ <span aria-hidden="true">→</span></button>
+          <div class="tiny-note">แตะเลือกคำตอบ เกมจะไปข้อต่อไปให้อัตโนมัติ ไม่มีคำตอบผิด</div>
+        </div>
+        <div class="intro-art" aria-hidden="true">
+          <div class="sun"></div><div class="window"></div><div class="plant">♧</div>
+          <div class="table"></div>
+          <div class="person"><div class="head"></div><div class="hair"></div><div class="body"></div></div>
+          <div class="speech"><strong>กรรมการสัมภาษณ์</strong>ยินดีที่ได้พบกันนะ เริ่มจากแนะนำตัวเองได้เลย</div>
+        </div>
+      </section>
+
+      <section id="interview" class="game hidden" aria-label="เกมสัมภาษณ์">
+        <div class="game-head">
+          <div><div class="eyebrow">UNIVERSITY INTERVIEW</div><div class="progress-label" id="progress-label"></div></div>
+          <div style="width:min(270px, 42%)"><div class="progress-label" id="progress-percent"></div><div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div></div>
+        </div>
+        <div class="interview-grid">
+          <article class="question-card">
+            <div id="question-tag" class="question-tag"></div>
+            <h2 id="question-text"></h2>
+            <p id="question-hint" class="question-hint">แตะเลือกคำตอบ เกมจะพาไปข้อต่อไปให้อัตโนมัติใน 2 วินาที</p>
+            <div id="answers" class="answers"></div>
+            <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+            <div id="question-actions" class="question-actions" aria-live="polite">แตะคำตอบที่คิดว่าใช่ได้เลย</div>
+          </article>
+          <aside class="side-column">
+            <section class="side-card">
+              <h3>สิ่งที่กรรมการมองหา</h3>
+              <div class="score-row"><span>การสื่อสาร</span><span id="clarity-score">ยังไม่ประเมิน</span></div>
+              <div class="mini-track"><div id="clarity-bar" class="mini-fill" style="width:0%"></div></div>
+              <div class="score-row"><span>การคิดวิเคราะห์</span><span id="thinking-score">ยังไม่ประเมิน</span></div>
+              <div class="mini-track"><div id="thinking-bar" class="mini-fill" style="width:0%"></div></div>
+              <div class="score-row"><span>ความเข้าใจผู้อื่น</span><span id="care-score">ยังไม่ประเมิน</span></div>
+              <div class="mini-track"><div id="care-bar" class="mini-fill" style="width:0%"></div></div>
+            </section>
+            <section class="side-card">
+              <h3>เคล็ดลับเล็ก ๆ</h3>
+              <div class="tip-box">ตอบจากประสบการณ์จริงของคุณได้เลย ลองเล่าให้เห็นทั้งสิ่งที่ทำ วิธีคิด และสิ่งที่ได้เรียนรู้</div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="results" class="results hidden" aria-labelledby="result-title">
+        <article class="result-card">
+          <div class="eyebrow">YOUR INTERVIEW SNAPSHOT</div>
+          <div class="result-top">
+            <div id="total-score" class="score-circle"></div>
+            <div><h1 id="result-title"></h1><p id="result-subtitle"></p></div>
+          </div>
+          <div id="result-metrics" class="result-metrics"></div>
+          <div class="result-advice"><strong>ก้าวต่อไปของคุณ</strong><p id="result-advice"></p></div>
+          <div class="recap"><h3>คำตอบของคุณ</h3><div id="recap-list"></div></div>
+          <div class="result-actions">
+            <button id="retry-button" class="primary">ลองสัมภาษณ์อีกครั้ง ↻</button>
+            <button id="home-button" class="text-button">กลับหน้าแรก</button>
+          </div>
+          <p class="disclaimer">คะแนนนี้เป็นเพียงแนวทางสะท้อนการฝึกซ้อม ไม่ใช่ผลการประเมินหรือโอกาสผ่านการคัดเลือกจริง</p>
+        </article>
+      </section>
+    </main>
+    <footer>ห้องสัมภาษณ์ · ฝึกซ้อมในแบบของคุณ</footer>
+  </div>
+
+  <script>
+    const additionalQuestions = [
+      { tag: "เลือกสาขา", text: "ทำไมถึงเลือกสมัครสาขานี้ แทนที่จะเป็นสาขาอื่น", answers: ["เชื่อมสิ่งที่สนใจกับประสบการณ์และทักษะที่อยากพัฒนาในสาขานี้", "สนใจหลายสาขา แต่สาขานี้ดูน่าสนใจและเหมาะกับคะแนน", "เลือกตามเพื่อนหรือครอบครัว โดยยังไม่รู้รายละเอียดของสาขา"] },
+      { tag: "รู้จักมหาวิทยาลัย", text: "อะไรทำให้คุณอยากเรียนที่มหาวิทยาลัยแห่งนี้", answers: ["ยกตัวอย่างหลักสูตรหรือโอกาสเฉพาะที่ตรงกับเป้าหมายของตัวเอง", "บอกว่ามหาวิทยาลัยมีชื่อเสียงและบรรยากาศน่าสนใจ", "บอกว่าเลือกเพราะเดินทางสะดวกหรือมีคนแนะนำ"] },
+      { tag: "วิชาที่ชอบ", text: "วิชาไหนที่คุณชอบมากที่สุด และเคยนำสิ่งที่เรียนไปใช้อย่างไร", answers: ["ยกตัวอย่างสิ่งที่เรียน วิธีนำไปลองใช้ และสิ่งที่ได้ค้นพบ", "บอกชื่อวิชาที่ชอบและเหตุผลกว้าง ๆ ว่าเรียนสนุก", "ตอบว่าวิชาไหนก็ได้ที่คะแนนดี โดยยังนึกตัวอย่างไม่ออก"] },
+      { tag: "รับมือความท้าทาย", text: "เล่าถึงช่วงที่เจอเรื่องยากในการเรียน คุณผ่านมันมาได้อย่างไร", answers: ["อธิบายปัญหา วิธีขอความช่วยเหลือหรือปรับวิธีเรียน และผลที่เกิดขึ้น", "บอกว่าพยายามอ่านหนังสือมากขึ้นจนสถานการณ์ดีขึ้น", "บอกว่ารอให้ปัญหาผ่านไปเองหรือให้คนอื่นจัดการ"] },
+      { tag: "จัดการเวลา", text: "ถ้ามีงานหลายอย่างที่ต้องส่งในสัปดาห์เดียวกัน คุณจะเริ่มอย่างไร", answers: ["เรียงความสำคัญและกำหนดเวลาย่อย พร้อมเผื่อเวลาสำหรับงานเร่งด่วน", "เริ่มจากงานที่ชอบหรือทำได้เร็วที่สุดก่อน", "รอจนใกล้กำหนดแล้วค่อยทำทุกอย่างพร้อมกัน"] },
+      { tag: "ทำงานเป็นทีม", text: "คุณมักช่วยให้ทีมทำงานร่วมกันได้ดีขึ้นอย่างไร", answers: ["ถามความถนัดของสมาชิก แบ่งงานชัดเจน และคอยเช็กว่าทุกคนมีส่วนร่วม", "รับทำส่วนที่ตัวเองถนัดให้เสร็จ แล้วค่อยดูว่าส่วนอื่นเป็นอย่างไร", "ปล่อยให้คนที่เป็นหัวหน้าทีมจัดการทั้งหมด"] },
+      { tag: "เมื่อทำพลาด", text: "ถ้าคุณทำผิดพลาดจนกระทบงานของทีม คุณจะทำอย่างไร", answers: ["ยอมรับผลกระทบ รีบแจ้งทีม ช่วยแก้ปัญหา และหาวิธีป้องกันซ้ำ", "ขอโทษและพยายามแก้เฉพาะส่วนที่ทำได้", "หวังว่าจะไม่มีใครสังเกตเห็นความผิดพลาด"] },
+      { tag: "รับฟังคำแนะนำ", text: "ถ้าได้รับคำวิจารณ์ที่ทำให้รู้สึกไม่สบายใจ คุณจะรับมืออย่างไร", answers: ["ตั้งใจฟัง ถามให้เข้าใจตัวอย่าง แล้วเลือกสิ่งที่นำไปปรับปรุงได้", "รับฟังไว้ก่อนและค่อยกลับมาคิดภายหลัง", "ไม่สนใจคำแนะนำเพราะรู้สึกว่าอีกฝ่ายไม่เข้าใจเรา"] },
+      { tag: "ความแตกต่าง", text: "ถ้าเพื่อนร่วมกลุ่มมีวิธีคิดต่างจากคุณมาก คุณจะทำอย่างไร", answers: ["ชวนแลกเหตุผลและประสบการณ์ แล้วหาวิธีทำงานที่เคารพความต่าง", "ยอมตามเพื่อนเพื่อให้ทำงานเสร็จเร็ว", "หลีกเลี่ยงการคุยหรือแยกไปทำงานคนเดียว"] },
+      { tag: "จริยธรรม", text: "ถ้าเห็นเพื่อนลอกงานเพราะกลัวส่งไม่ทัน คุณจะทำอย่างไร", answers: ["คุยกับเพื่อนอย่างเข้าใจ ชวนหาทางทำงานให้ทันอย่างซื่อสัตย์ และขอคำปรึกษาหากจำเป็น", "เตือนเพื่อนว่าไม่ควรทำ แต่ปล่อยให้ตัดสินใจเอง", "ช่วยส่งงานที่ลอกมาเพราะไม่อยากให้เพื่อนมีปัญหา"] },
+      { tag: "ติดตามสังคม", text: "มีประเด็นหรือข่าวอะไรที่คุณสนใจ และคิดว่าเกี่ยวข้องกับสาขาที่สมัครอย่างไร", answers: ["ยกประเด็นพร้อมอธิบายหลายมุมและเชื่อมกับสิ่งที่อยากเรียนรู้", "เล่าข่าวที่จำได้และบอกความเห็นสั้น ๆ", "ตอบว่าไม่ค่อยติดตามและยังไม่ได้คิดว่าเกี่ยวกับสาขาอย่างไร"] },
+      { tag: "ใช้เวลาว่าง", text: "เวลาว่างคุณชอบทำอะไร และสิ่งนั้นสอนอะไรเกี่ยวกับตัวคุณ", answers: ["เล่ากิจกรรมจริงและทักษะหรือมุมมองที่ได้จากการทำอย่างสม่ำเสมอ", "บอกงานอดิเรกที่ชอบและเหตุผลว่าทำให้ผ่อนคลาย", "บอกว่าทำตามเพื่อนหรือยังไม่มีกิจกรรมที่สนใจ"] },
+      { tag: "มีส่วนร่วม", text: "คุณอยากมีส่วนช่วยเพื่อนหรือชุมชนในมหาวิทยาลัยแบบไหน", answers: ["ระบุสิ่งที่ทำได้และเริ่มลงมือได้ พร้อมเปิดรับความต้องการของคนในชุมชน", "เข้าร่วมกิจกรรมเมื่อมีโอกาสและช่วยตามที่ได้รับมอบหมาย", "รอให้มีคนชวนหรือบอกก่อนว่าจะให้ช่วยอะไร"] },
+      { tag: "เรียนรู้สิ่งใหม่", text: "ถ้าต้องเรียนเรื่องที่ยากและไม่คุ้นเคย คุณจะเริ่มต้นอย่างไร", answers: ["แบ่งเรื่องเป็นขั้นเล็ก ๆ ทดลองทำ ถามเมื่อจำเป็น และทบทวนสิ่งที่ยังไม่เข้าใจ", "อ่านเนื้อหาซ้ำหลายรอบจนกว่าจะเข้าใจ", "เลี่ยงเรื่องนั้นไปก่อนเพราะกลัวทำไม่ได้"] },
+      { tag: "คำถามถึงกรรมการ", text: "มีอะไรที่คุณอยากถามกรรมการเกี่ยวกับการเรียนหรือชีวิตในสาขานี้", answers: ["ถามอย่างเจาะจงเกี่ยวกับโอกาสเรียนรู้หรือประสบการณ์ที่เชื่อมกับเป้าหมาย", "ถามข้อมูลทั่วไปเกี่ยวกับตารางเรียนหรือกิจกรรม", "บอกว่าไม่มีคำถาม เพราะยังไม่ได้คิดไว้"] }
+    ];
+
+    const optionScores = [[10, 9, 8], [7, 7, 6], [5, 5, 5]];
+    const optionFeedback = [
+      "คำตอบชัดเจนและมีเหตุผล ลองเสริมตัวอย่างจากประสบการณ์จริงเพื่อให้เห็นภาพยิ่งขึ้น",
+      "เป็นจุดเริ่มต้นที่ดี ลองเพิ่มรายละเอียดหรือเหตุผลเฉพาะที่สะท้อนมุมมองของคุณ",
+      "ไม่เป็นไรที่ยังนึกไม่ออก ลองทบทวนประสบการณ์จริงและเลือกสิ่งเล็ก ๆ ที่อยากเริ่มพัฒนา"
+    ];
+    const questions = [
+      {
+        tag: "แนะนำตัว",
+        text: "ช่วยแนะนำตัวเอง และเล่าว่าอะไรทำให้คุณสนใจเรียนต่อในสาขาที่เลือก",
+        options: [
+          { text: "เล่าจุดเริ่มต้นหรือประสบการณ์ที่ทำให้สนใจ เชื่อมโยงกับสาขา และบอกสิ่งที่อยากเรียนรู้ต่อ", scores: [10, 9, 8], feedback: "ดีมาก การเล่าที่มาพร้อมเป้าหมายช่วยให้กรรมการเห็นทั้งตัวตนและแรงจูงใจของคุณ" },
+          { text: "บอกชื่อ โรงเรียน งานอดิเรก และพูดถึงสาขาที่สนใจคร่าว ๆ", scores: [6, 5, 5], feedback: "เป็นจุดเริ่มต้นที่ดี ลองเพิ่มเหตุการณ์หรือเหตุผลเฉพาะที่ทำให้สาขานี้มีความหมายกับคุณ" },
+          { text: "บอกว่ายังไม่แน่ใจว่าต้องเล่าอะไร แต่เลือกสาขานี้เพราะคนรอบตัวแนะนำ", scores: [4, 4, 5], feedback: "ความซื่อตรงเป็นข้อดี ลองทบทวนสิ่งที่คุณชอบหรือเคยลองทำ เพื่อหาเหตุผลที่เป็นของตัวเอง" }
+        ]
+      },
+      {
+        tag: "แรงจูงใจ",
+        text: "มีเหตุการณ์หรือผลงานอะไรที่ทำให้คุณภูมิใจที่สุด และคุณได้เรียนรู้อะไรจากมัน",
+        options: [
+          { text: "เล่าสถานการณ์ บทบาทของตัวเอง อุปสรรคที่เจอ และสิ่งที่นำไปใช้ต่อได้", scores: [9, 10, 8], feedback: "เยี่ยมเลย การเล่ากระบวนการและบทเรียนทำให้ความสำเร็จมีความหมายกว่าการบอกแค่ผลลัพธ์" },
+          { text: "เล่าผลงานที่ได้รางวัล พร้อมบอกว่าดีใจและตั้งใจมาก", scores: [7, 6, 6], feedback: "ผลงานน่าสนใจ ลองเล่าต่อว่าคุณลงมือทำส่วนไหนและผ่านความท้าทายอย่างไร" },
+          { text: "นึกไม่ออกว่าเคยทำอะไรสำเร็จเป็นพิเศษ", scores: [5, 5, 5], feedback: "ความภูมิใจไม่จำเป็นต้องเป็นรางวัล ลองนึกถึงครั้งที่ช่วยใครสักคนหรือพยายามจนทำสิ่งยากได้" }
+        ]
+      },
+      {
+        tag: "การแก้ปัญหา",
+        text: "ถ้าต้องทำงานกลุ่มแล้วสมาชิกเห็นไม่ตรงกัน คุณจะรับมืออย่างไร",
+        options: [
+          { text: "ฟังเหตุผลของแต่ละคน ชวนกลับมาดูเป้าหมายร่วมกัน แล้วหาทางเลือกที่ทุกคนทดลองได้", scores: [9, 10, 10], feedback: "เป็นวิธีที่สมดุล ทั้งรับฟังและพาทีมไปข้างหน้า อย่าลืมตกลงขั้นตอนและเวลาเพื่อติดตามผลด้วย" },
+          { text: "เสนอความคิดเห็นของตัวเองให้ชัด แล้วให้ทีมโหวตเลือกทางที่เสียงข้างมากเห็นด้วย", scores: [8, 7, 6], feedback: "การตัดสินใจชัดเจนช่วยให้งานเดินต่อ ลองเปิดพื้นที่ให้เสียงส่วนน้อยอธิบายข้อกังวลก่อนสรุปด้วย" },
+          { text: "เลือกทำตามเพื่อนที่สนิทที่สุด จะได้ไม่ต้องมีปัญหากัน", scores: [5, 5, 5], feedback: "การรักษาความสัมพันธ์สำคัญ แต่ทีมอาจได้ผลลัพธ์ที่ดีกว่าถ้าทุกคนได้แบ่งปันเหตุผลอย่างเท่าเทียม" }
+        ]
+      },
+      {
+        tag: "รู้จักตัวเอง",
+        text: "เล่าจุดแข็งหนึ่งอย่างและเรื่องที่คุณกำลังพยายามพัฒนา",
+        options: [
+          { text: "ยกตัวอย่างจุดแข็งจากเหตุการณ์จริง และอธิบายวิธีฝึกเรื่องที่อยากพัฒนา", scores: [10, 9, 8], feedback: "ตอบได้เห็นภาพและเติบโตได้จริง การยอมรับสิ่งที่กำลังฝึกเป็นสัญญาณของการรู้จักตัวเอง" },
+          { text: "บอกว่าตัวเองขยัน แต่ยังไม่ค่อยมีจุดอ่อน เพราะตั้งใจทำทุกอย่างเต็มที่", scores: [6, 5, 5], feedback: "ความตั้งใจเป็นจุดแข็ง ลองยกตัวอย่างให้ชัด และเลือกทักษะหนึ่งอย่างที่อยากพัฒนาต่อ" },
+          { text: "บอกว่ามีจุดอ่อนหลายอย่าง แต่ยังไม่รู้ว่าจะเริ่มแก้ตรงไหน", scores: [5, 5, 6], feedback: "การมองเห็นสิ่งที่อยากพัฒนาเป็นก้าวแรก ลองเลือกเรื่องเล็ก ๆ หนึ่งอย่างและวางแผนลงมือทำ" }
+        ]
+      },
+      {
+        tag: "เป้าหมาย",
+        text: "ถ้าได้รับโอกาสเข้าเรียน คุณอยากใช้ช่วงมหาวิทยาลัยทำอะไรให้เกิดประโยชน์",
+        options: [
+          { text: "เล่าเป้าหมายที่อยากลองทำ ทักษะที่อยากเรียน และคนหรือชุมชนที่หวังว่าจะได้สร้างประโยชน์ร่วมกัน", scores: [9, 10, 10], feedback: "เป้าหมายเชื่อมทั้งการเรียนรู้และการแบ่งปันได้ดี เปิดใจไว้ด้วยว่าแผนอาจเติบโตไปตามประสบการณ์" },
+          { text: "ตั้งใจเรียนให้ได้เกรดดี เข้าร่วมกิจกรรม และเก็บประสบการณ์ให้มากที่สุด", scores: [7, 7, 6], feedback: "เป็นเป้าหมายที่ดี ลองเจาะจงอีกนิดว่ากิจกรรมหรือประสบการณ์แบบไหนที่อยากเริ่มต้น" },
+          { text: "ยังไม่ได้วางแผน อยากลองดูก่อนว่ามหาวิทยาลัยมีอะไรให้ทำบ้าง", scores: [5, 5, 5], feedback: "การเปิดรับโอกาสเป็นเรื่องดี ลองคิดไว้สักหนึ่งอย่างที่อยากทดลอง เพื่อให้เริ่มต้นได้อย่างมั่นใจ" }
+        ]
+      },
+      ...additionalQuestions.map(({ answers: choices, ...question }) => ({
+        ...question,
+        options: choices.map((text, index) => ({
+          text,
+          scores: [optionScores[index][0], optionScores[index][1], optionScores[index][2]],
+          feedback: optionFeedback[index]
+        }))
+      }))
+    ];
+
+    const metricNames = ["การสื่อสาร", "การคิดวิเคราะห์", "ความเข้าใจผู้อื่น"];
+    let currentQuestion = 0;
+    let selectedOption = null;
+    let answers = [];
+    let totals = [0, 0, 0];
+
+    const welcome = document.querySelector("#welcome");
+    const interview = document.querySelector("#interview");
+    const results = document.querySelector("#results");
+    const answersElement = document.querySelector("#answers");
+    const feedback = document.querySelector("#feedback");
+    const questionActions = document.querySelector("#question-actions");
+    let advanceTimer;
+
+    function showScreen(screen) {
+      welcome.classList.toggle("hidden", screen !== "welcome");
+      interview.classList.toggle("hidden", screen !== "interview");
+      results.classList.toggle("hidden", screen !== "results");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startGame() {
+      window.clearTimeout(advanceTimer);
+      currentQuestion = 0;
+      selectedOption = null;
+      answers = [];
+      totals = [0, 0, 0];
+      updateScoreboard();
+      showScreen("interview");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = questions[currentQuestion];
+      document.querySelector("#progress-label").textContent = `คำถามที่ ${currentQuestion + 1} จาก ${questions.length}`;
+      document.querySelector("#progress-percent").textContent = `${Math.round((currentQuestion / questions.length) * 100)}%`;
+      document.querySelector("#progress-fill").style.width = `${(currentQuestion / questions.length) * 100}%`;
+      document.querySelector("#question-tag").textContent = question.tag;
+      document.querySelector("#question-text").textContent = question.text;
+      document.querySelector("#question-hint").textContent = "แตะเลือกคำตอบ เกมจะพาไปข้อต่อไปให้อัตโนมัติใน 2 วินาที";
+      answersElement.replaceChildren();
+      feedback.classList.add("hidden");
+      questionActions.textContent = "แตะคำตอบที่คิดว่าใช่ได้เลย";
+
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer";
+        button.innerHTML = `<span class="answer-letter">${String.fromCharCode(65 + index)}</span><span class="answer-text"></span>`;
+        button.querySelector(".answer-text").textContent = option.text;
+        button.addEventListener("click", () => chooseAnswer(index));
+        answersElement.append(button);
+      });
+    }
+
+    function chooseAnswer(index) {
+      if (selectedOption !== null) return;
+      selectedOption = index;
+      const option = questions[currentQuestion].options[index];
+      answersElement.querySelectorAll(".answer").forEach((button, buttonIndex) => {
+        button.disabled = true;
+        if (buttonIndex === index) button.classList.add("selected");
+      });
+      option.scores.forEach((score, metricIndex) => totals[metricIndex] += score);
+      answers.push({ question: questions[currentQuestion].tag, text: option.text });
+      feedback.innerHTML = `<strong>ข้อสังเกตจากคำตอบนี้</strong><span></span>`;
+      feedback.querySelector("span").textContent = option.feedback;
+      feedback.classList.remove("hidden");
+      questionActions.textContent = currentQuestion === questions.length - 1
+        ? "บันทึกแล้ว — กำลังสรุปผล…"
+        : "บันทึกแล้ว — กำลังไปคำถามถัดไป…";
+      updateScoreboard();
+      advanceTimer = window.setTimeout(advance, 1800);
+    }
+
+    function updateScoreboard() {
+      const ids = ["clarity", "thinking", "care"];
+      ids.forEach((id, index) => {
+        const average = answers.length ? Math.round(totals[index] / answers.length) : 0;
+        document.querySelector(`#${id}-score`).textContent = answers.length ? `${average}/10` : "ยังไม่ประเมิน";
+        document.querySelector(`#${id}-bar`).style.width = answers.length ? `${(average / 10) * 100}%` : "0%";
+      });
+    }
+
+    function advance() {
+      if (selectedOption === null) return;
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion += 1;
+        selectedOption = null;
+        renderQuestion();
+      } else {
+        renderResults();
+      }
+    }
+
+    function renderResults() {
+      const average = Math.round(totals.reduce((sum, score) => sum + score, 0) / (questions.length * metricNames.length));
+      const title = average >= 8.5 ? "พร้อมก้าวเข้าห้องสัมภาษณ์" : average >= 7 ? "มีพื้นฐานที่ดี พร้อมพัฒนาต่อ" : "เริ่มต้นได้ดีแล้ว";
+      const advice = totals.indexOf(Math.min(...totals));
+      const adviceText = [
+        "ลองฝึกเล่าเรื่องให้กระชับ โดยเรียงเหตุการณ์ สิ่งที่คุณลงมือทำ และผลที่เกิดขึ้น",
+        "ลองฝึกอธิบายเหตุผล เปรียบเทียบทางเลือก และสิ่งที่ได้เรียนรู้จากแต่ละสถานการณ์",
+        "ลองฝึกเล่าถึงการรับฟัง ทำงานร่วมกับคนอื่น และคำนึงถึงมุมมองที่หลากหลาย"
+      ][advice];
+      document.querySelector("#total-score").innerHTML = `${average}<small>คะแนนจาก 10</small>`;
+      document.querySelector("#result-title").textContent = title;
+      document.querySelector("#result-subtitle").textContent = "ขอบคุณที่ลองเล่าเรื่องราวของตัวเอง";
+      document.querySelector("#result-advice").textContent = adviceText;
+      const metrics = document.querySelector("#result-metrics");
+      metrics.replaceChildren();
+      metricNames.forEach((name, index) => {
+        const card = document.createElement("div");
+        card.className = "metric";
+        card.innerHTML = `<strong></strong><span></span>`;
+        card.querySelector("strong").textContent = `${(totals[index] / questions.length).toFixed(1)}/10`;
+        card.querySelector("span").textContent = name;
+        metrics.append(card);
+      });
+      const recap = document.querySelector("#recap-list");
+      recap.replaceChildren();
+      answers.forEach(answer => {
+        const row = document.createElement("div");
+        row.className = "recap-row";
+        const question = document.createElement("strong");
+        question.textContent = answer.question;
+        const response = document.createElement("span");
+        response.textContent = answer.text;
+        row.append(question, response);
+        recap.append(row);
+      });
+      document.querySelector("#progress-percent").textContent = "100%";
+      document.querySelector("#progress-fill").style.width = "100%";
+      showScreen("results");
+    }
+
+    document.querySelector("#start-button").addEventListener("click", startGame);
+    document.querySelector("#retry-button").addEventListener("click", startGame);
+    document.querySelector("#home-button").addEventListener("click", () => showScreen("welcome"));
+  </script>
+</body>
+</html>
