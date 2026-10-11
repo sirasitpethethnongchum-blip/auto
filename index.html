@@ -134,8 +134,10 @@
       border-radius: 3px 10px 10px 3px; color: #5b625c; background: #fbf5ed; font-size: 13px; line-height: 1.7;
     }
     .feedback strong { display: block; margin-bottom: 2px; color: var(--ink); }
+    .feedback p { margin: 0; }
+    .followup { margin-top: 12px; padding-top: 11px; border-top: 1px solid #e9ddce; }
+    .followup p { color: var(--ink); font-weight: 600; }
     .question-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
-    .question-actions .primary:disabled { opacity: .45; cursor: not-allowed; transform: none; }
     .side-card { padding: 22px; }
     .side-card + .side-card { margin-top: 14px; }
     .side-card h3 { margin-bottom: 16px; font-size: 15px; }
@@ -237,7 +239,7 @@
             <span><b aria-hidden="true">♡</b> เล่นได้เลย</span>
           </div>
           <button id="start-button" class="primary">เริ่มการสัมภาษณ์ <span aria-hidden="true">→</span></button>
-          <div class="tiny-note">แตะเลือกคำตอบ เกมจะไปข้อต่อไปให้อัตโนมัติ ไม่มีคำตอบผิด</div>
+          <div class="tiny-note">20 คำถาม พร้อมคำถามต่อยอดแบบกรรมการสัมภาษณ์จริง ลองคิดให้ลึกกว่าแค่เลือกตัวเลือก</div>
         </div>
         <div class="intro-art" aria-hidden="true">
           <div class="sun"></div><div class="window"></div><div class="plant">♧</div>
@@ -249,17 +251,21 @@
 
       <section id="interview" class="game hidden" aria-label="เกมสัมภาษณ์">
         <div class="game-head">
-          <div><div class="eyebrow">UNIVERSITY INTERVIEW</div><div class="progress-label" id="progress-label"></div></div>
+          <div><div class="eyebrow">CHALLENGE INTERVIEW</div><div class="progress-label" id="progress-label"></div></div>
           <div style="width:min(270px, 42%)"><div class="progress-label" id="progress-percent"></div><div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div></div>
         </div>
         <div class="interview-grid">
           <article class="question-card">
             <div id="question-tag" class="question-tag"></div>
             <h2 id="question-text"></h2>
-            <p id="question-hint" class="question-hint">แตะเลือกคำตอบ เกมจะพาไปข้อต่อไปให้อัตโนมัติใน 2 วินาที</p>
+            <p id="question-hint" class="question-hint">เลือกคำตอบ แล้วลองตอบคำถามต่อยอดด้วยเหตุผลของคุณ</p>
             <div id="answers" class="answers"></div>
-            <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
-            <div id="question-actions" class="question-actions" aria-live="polite">แตะคำตอบที่คิดว่าใช่ได้เลย</div>
+            <div id="feedback" class="feedback hidden" aria-live="polite">
+              <strong>ข้อสังเกตจากคำตอบนี้</strong>
+              <p id="feedback-text"></p>
+              <div class="followup"><strong>กรรมการถามต่อ</strong><p id="followup-text"></p></div>
+            </div>
+            <div class="question-actions"><button id="next-button" class="primary hidden">ไปคำถามถัดไป →</button></div>
           </article>
           <aside class="side-column">
             <section class="side-card">
@@ -381,6 +387,29 @@
       }))
     ];
 
+    const followupPrompts = [
+      "ถ้าประสบการณ์ที่เล่ามาไม่ได้เกี่ยวกับสาขานี้โดยตรง คุณจะอธิบายให้กรรมการเห็นความเชื่อมโยงอย่างไร",
+      "ถ้าผลงานนั้นสำเร็จเพราะทีมเป็นส่วนใหญ่ คุณมีส่วนรับผิดชอบอะไรที่ชัดเจน และจะพิสูจน์ได้อย่างไร",
+      "ถ้าทีมเลือกแนวทางที่คุณไม่เห็นด้วยและมีเวลาจำกัด คุณจะสนับสนุนการตัดสินใจร่วมกันอย่างไร",
+      "เล่าสถานการณ์จริงที่จุดอ่อนนี้ส่งผลกับงาน แล้วคุณใช้หลักฐานอะไรดูว่าตัวเองพัฒนาขึ้น",
+      "ถ้าความสนใจของคุณเปลี่ยนหลังได้เรียนจริง เป้าหมายหรือแผนสำรองของคุณจะเป็นอย่างไร",
+      "ถ้าพบว่าสาขาที่เลือกไม่ตรงกับภาพที่คุณคาดไว้ คุณจะตรวจสอบข้อมูลและตัดสินใจอย่างไร",
+      "มีข้อมูลอะไรที่ทำให้คุณเลือกมหาวิทยาลัยนี้โดยเฉพาะ และถ้าข้อมูลนั้นเปลี่ยนใจคุณจะทำอย่างไร",
+      "ถ้าผลการเรียนในวิชานี้ไม่ดีเท่าที่หวัง คุณจะแยกได้อย่างไรว่าเกิดจากวิธีเรียนหรือความเข้าใจเนื้อหา",
+      "ถ้าความพยายามแบบเดิมไม่ได้ผล คุณจะเปลี่ยนวิธีเมื่อไร และจะขอความช่วยเหลือจากใคร",
+      "ถ้าประเมินเวลาแต่ละงานผิดจนทำไม่ทันหนึ่งงาน คุณจะสื่อสารและจัดลำดับความรับผิดชอบใหม่อย่างไร",
+      "ถ้าสมาชิกคนหนึ่งทำงานไม่ทันเพราะมีข้อจำกัดส่วนตัว คุณจะช่วยทีมโดยไม่ทำให้ภาระตกกับคนเดิมซ้ำ ๆ ได้อย่างไร",
+      "ถ้าการแก้ความผิดพลาดของคุณทำให้กำหนดส่งทั้งทีมเสี่ยงล่าช้า คุณจะจัดการความโปร่งใสกับผลกระทบอย่างไร",
+      "ถ้าคำวิจารณ์ขัดกับข้อมูลที่คุณมี คุณจะตรวจสอบอย่างไรโดยไม่ปิดรับข้อเสนอแนะ",
+      "ถ้าความเห็นที่ต่างกันเกี่ยวข้องกับความเป็นธรรมต่อสมาชิกบางคน คุณจะตัดสินใจอย่างไรนอกจากการโหวต",
+      "ถ้าเพื่อนขอให้คุณเก็บเรื่องการลอกงานเป็นความลับ คุณจะรักษาความสัมพันธ์และความซื่อสัตย์ทางวิชาการอย่างไร",
+      "แหล่งข้อมูลที่คุณใช้น่าเชื่อถือเพียงใด และมีข้อมูลด้านไหนที่อาจทำให้ข้อสรุปของคุณเปลี่ยน",
+      "ถ้างานอดิเรกที่เล่ามากินเวลาจนกระทบการเรียน คุณจะตัดสินใจรักษาสมดุลอย่างไร",
+      "คุณจะรู้ได้อย่างไรว่าความช่วยเหลือที่ตั้งใจให้ชุมชนตรงกับสิ่งที่ชุมชนต้องการจริง",
+      "ถ้าค้นคว้าและถามคนอื่นแล้วยังไม่เข้าใจ คุณจะทดลองหรือประเมินความเข้าใจของตัวเองต่ออย่างไร",
+      "คำตอบแบบไหนจากกรรมการที่จะทำให้คุณต้องกลับไปทบทวนความเหมาะสมของสาขานี้ และเพราะอะไร"
+    ];
+
     const metricNames = ["การสื่อสาร", "การคิดวิเคราะห์", "ความเข้าใจผู้อื่น"];
     let currentQuestion = 0;
     let selectedOption = null;
@@ -392,8 +421,7 @@
     const results = document.querySelector("#results");
     const answersElement = document.querySelector("#answers");
     const feedback = document.querySelector("#feedback");
-    const questionActions = document.querySelector("#question-actions");
-    let advanceTimer;
+    const nextButton = document.querySelector("#next-button");
 
     function showScreen(screen) {
       welcome.classList.toggle("hidden", screen !== "welcome");
@@ -403,7 +431,6 @@
     }
 
     function startGame() {
-      window.clearTimeout(advanceTimer);
       currentQuestion = 0;
       selectedOption = null;
       answers = [];
@@ -420,10 +447,11 @@
       document.querySelector("#progress-fill").style.width = `${(currentQuestion / questions.length) * 100}%`;
       document.querySelector("#question-tag").textContent = question.tag;
       document.querySelector("#question-text").textContent = question.text;
-      document.querySelector("#question-hint").textContent = "แตะเลือกคำตอบ เกมจะพาไปข้อต่อไปให้อัตโนมัติใน 2 วินาที";
+      document.querySelector("#question-hint").textContent = "เลือกคำตอบ แล้วลองคิดคำตอบต่อยอดให้มีเหตุผลและตัวอย่างสนับสนุน";
       answersElement.replaceChildren();
       feedback.classList.add("hidden");
-      questionActions.textContent = "แตะคำตอบที่คิดว่าใช่ได้เลย";
+      nextButton.classList.add("hidden");
+      nextButton.textContent = currentQuestion === questions.length - 1 ? "ดูผลการสัมภาษณ์ →" : "ไปคำถามถัดไป →";
 
       question.options.forEach((option, index) => {
         const button = document.createElement("button");
@@ -446,14 +474,12 @@
       });
       option.scores.forEach((score, metricIndex) => totals[metricIndex] += score);
       answers.push({ question: questions[currentQuestion].tag, text: option.text });
-      feedback.innerHTML = `<strong>ข้อสังเกตจากคำตอบนี้</strong><span></span>`;
-      feedback.querySelector("span").textContent = option.feedback;
+      document.querySelector("#feedback-text").textContent = option.feedback;
+      document.querySelector("#followup-text").textContent = followupPrompts[currentQuestion];
       feedback.classList.remove("hidden");
-      questionActions.textContent = currentQuestion === questions.length - 1
-        ? "บันทึกแล้ว — กำลังสรุปผล…"
-        : "บันทึกแล้ว — กำลังไปคำถามถัดไป…";
+      document.querySelector("#question-hint").textContent = "ลองตอบคำถามต่อยอดด้วยเสียงหรือคิดคำตอบในใจก่อน แล้วค่อยไปต่อ";
+      nextButton.classList.remove("hidden");
       updateScoreboard();
-      advanceTimer = window.setTimeout(advance, 1800);
     }
 
     function updateScoreboard() {
@@ -517,6 +543,7 @@
     }
 
     document.querySelector("#start-button").addEventListener("click", startGame);
+    nextButton.addEventListener("click", advance);
     document.querySelector("#retry-button").addEventListener("click", startGame);
     document.querySelector("#home-button").addEventListener("click", () => showScreen("welcome"));
   </script>
