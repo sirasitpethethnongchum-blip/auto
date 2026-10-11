@@ -1,4 +1,3 @@
-ggame
 name: Deploy game to GitHub Pages
 
 on:
